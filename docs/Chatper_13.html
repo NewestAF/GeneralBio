@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>생명과학 정리노트 — DNA & 유전</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:  #16a34a;
+      --green-light: #dcfce7;
+      --green-mid: #86efac;
+      --blue:   #2563eb;
+      --blue-light: #dbeafe;
+      --red-light: #fee2e2;
+      --yellow: #fef9c3;
+      --gray-bg: #f8fafc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-bg);
+      color: #1e293b;
+    }
+    code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ── 헤더 ── */
+    .hero {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #1e3a5f 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ── 섹션 카드 ── */
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .section-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .section-header:hover { background: #f1f5f9; }
+
+    .section-num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; flex-shrink: 0;
+      color: #fff;
+    }
+    .section-body { padding: 0 24px 24px; }
+
+    /* ── 타임라인 ── */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 6px; top: 6px; bottom: 6px;
+      width: 2px; background: #e2e8f0; border-radius: 2px;
+    }
+    .timeline-item { position: relative; margin-bottom: 18px; }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: -25px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--green); border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--green);
+    }
+
+    /* ── 키워드 박스 ── */
+    .keyword-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .keyword-card {
+      background: var(--green-light);
+      border-left: 3px solid var(--green);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .keyword-card .kw-label { font-size: 12px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: .05em; }
+    .keyword-card .kw-text  { font-size: 14px; margin-top: 4px; line-height: 1.5; }
+
+    /* ── 테이블 ── */
+    .nice-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .nice-table th { background: #1e3a5f; color: #fff; padding: 10px 14px; text-align: left; }
+    .nice-table td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; }
+    .nice-table tr:last-child td { border-bottom: none; }
+    .nice-table tr:nth-child(even) td { background: #f8fafc; }
+
+    /* ── 배지 ── */
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 99px;
+      font-size: 12px; font-weight: 600;
+    }
+    .badge-green { background: var(--green-light); color: var(--green); }
+    .badge-blue  { background: var(--blue-light);  color: var(--blue); }
+    .badge-red   { background: var(--red-light);   color: #dc2626; }
+
+    /* ── 퀴즈 ── */
+    .quiz-section { background: linear-gradient(135deg, #f0fdf4, #eff6ff); border-radius: 16px; padding: 32px; }
+    .quiz-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .quiz-q { font-weight: 700; font-size: 16px; margin-bottom: 14px; color: #1e293b; }
+    .quiz-num { display: inline-block; background: #1e3a5f; color: #fff; border-radius: 6px; padding: 2px 9px; font-size: 13px; margin-right: 8px; }
+
+    .option-btn {
+      display: block; width: 100%; text-align: left;
+      padding: 11px 16px; border-radius: 8px; margin-bottom: 8px;
+      border: 1.5px solid #e2e8f0; background: #fff;
+      font-size: 14px; cursor: pointer; transition: all .15s;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .option-btn:hover:not(:disabled) { border-color: #2563eb; background: #eff6ff; }
+    .option-btn.correct  { border-color: #16a34a; background: #dcfce7; color: #14532d; font-weight: 600; }
+    .option-btn.wrong    { border-color: #dc2626; background: #fee2e2; color: #7f1d1d; }
+    .option-btn.disabled { opacity: .5; }
+    .option-btn:disabled { cursor: default; }
+
+    .ox-group { display: flex; gap: 12px; }
+    .ox-btn {
+      flex: 1; padding: 14px; border-radius: 10px; font-size: 22px;
+      border: 2px solid #e2e8f0; background: #fff; cursor: pointer;
+      transition: all .15s; font-weight: 700;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .ox-btn:hover:not(:disabled) { transform: scale(1.05); }
+    .ox-btn.correct { border-color: #16a34a; background: #dcfce7; }
+    .ox-btn.wrong   { border-color: #dc2626; background: #fee2e2; }
+
+    .fill-input {
+      width: 100%; padding: 10px 14px; border-radius: 8px;
+      border: 1.5px solid #e2e8f0; font-size: 14px; margin-bottom: 8px;
+      font-family: 'Noto Sans KR', sans-serif;
+      transition: border-color .15s;
+    }
+    .fill-input:focus { outline: none; border-color: #2563eb; }
+    .fill-input.correct { border-color: #16a34a; background: #dcfce7; }
+    .fill-input.wrong   { border-color: #dc2626; background: #fee2e2; }
+
+    .submit-btn {
+      padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      background: #1e3a5f; color: #fff; border: none; cursor: pointer;
+      transition: background .15s; font-family: 'Noto Sans KR', sans-serif;
+    }
+    .submit-btn:hover { background: #1e40af; }
+    .submit-btn:disabled { background: #94a3b8; cursor: default; }
+
+    .feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 14px; }
+    .feedback.ok  { background: var(--green-light); color: #14532d; }
+    .feedback.err { background: var(--red-light);   color: #7f1d1d; }
+
+    /* ── 점수판 ── */
+    .score-board {
+      background: linear-gradient(135deg, #064e3b, #1e3a5f);
+      border-radius: 16px; padding: 32px; text-align: center; color: #fff;
+      margin-top: 28px;
+    }
+    .score-num { font-size: 72px; font-weight: 700; line-height: 1; }
+    .score-denom { font-size: 24px; opacity: .7; }
+
+    /* ── 토글 ── */
+    .toggle-arrow { transition: transform .2s; display: inline-block; }
+    .collapsed .toggle-arrow { transform: rotate(-90deg); }
+
+    /* ── 메모 박스 ── */
+    .tip-box {
+      background: #fffbeb; border-left: 3px solid #f59e0b;
+      border-radius: 0 8px 8px 0; padding: 12px 16px;
+      font-size: 14px; margin: 12px 0;
+    }
+    .info-box {
+      background: var(--blue-light); border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0; padding: 12px 16px;
+      font-size: 14px; margin: 12px 0;
+    }
+
+    /* ── 진행바 ── */
+    .progress-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #16a34a, #2563eb); border-radius: 3px; transition: width .4s; }
+
+    @media (max-width: 640px) {
+      .section-header { padding: 16px; }
+      .section-body   { padding: 0 16px 16px; }
+      .quiz-section   { padding: 20px 16px; }
+      .keyword-grid   { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero py-16 px-6 text-center relative z-10">
+  <p class="text-green-300 text-sm font-semibold tracking-widest uppercase mb-3">생명과학 정리노트</p>
+  <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">DNA & 유전</h1>
+  <p class="text-slate-300 text-base md:text-lg max-w-xl mx-auto">
+    DNA의 발견부터 생명공학 기술까지 — 핵심 개념 정리 + 퀴즈
+  </p>
+  <div class="flex justify-center gap-3 mt-6 flex-wrap">
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;">📖 5개 챕터</span>
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;">❓ 15문제</span>
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;">⚡ 즉시 채점</span>
+  </div>
+</div>
+
+<!-- ═══════════════ 목차 네비 ═══════════════ -->
+<div class="max-w-3xl mx-auto px-4 py-6">
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">목차</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <a href="#ch1" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#16a34a;">1</span>
+        <span class="text-sm text-slate-600 group-hover:text-slate-900">DNA가 유전물질임의 발견</span>
+      </a>
+      <a href="#ch2" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#2563eb;">2</span>
+        <span class="text-sm text-slate-600 group-hover:text-slate-900">DNA의 구조</span>
+      </a>
+      <a href="#ch3" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#7c3aed;">3</span>
+        <span class="text-sm text-slate-600 group-hover:text-slate-900">DNA 복제</span>
+      </a>
+      <a href="#ch4" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#db2777;">4</span>
+        <span class="text-sm text-slate-600 group-hover:text-slate-900">염색체 & 후성유전학</span>
+      </a>
+      <a href="#ch5" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#d97706;">5</span>
+        <span class="text-sm text-slate-600 group-hover:text-slate-900">생명공학 기술</span>
+      </a>
+      <a href="#quiz" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition group">
+        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#0f766e;">✎</span>
+        <span class="text-sm font-semibold text-slate-700 group-hover:text-slate-900">🎯 퀴즈 풀기</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-3xl mx-auto px-4 pb-20 space-y-5">
+
+  <!-- ══════════════ CH1 ══════════════ -->
+  <div class="section-card" id="ch1">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num" style="background:#16a34a;">1</div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-800">DNA가 유전물질임의 발견</div>
+        <div class="text-xs text-slate-400 mt-0.5">역사적 실험 흐름</div>
+      </div>
+      <span class="toggle-arrow text-slate-400 text-lg">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="font-semibold text-slate-800">T.H. Morgan <span class="badge badge-green">1910</span></div>
+          <p class="text-sm text-slate-600 mt-1">유전자가 <strong>염색체</strong>에 위치함을 규명.</p>
+          <div class="info-box mt-2">
+            🪰 초파리 눈 색깔 실험(반성 유전)을 통해 유전자가 <strong>성염색체(X)</strong> 위에 있음을 밝힘.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="font-semibold text-slate-800">Griffith <span class="badge badge-green">1928</span></div>
+          <p class="text-sm text-slate-600 mt-1"><strong>형질전환(Transformation)</strong> 발견.</p>
+          <div class="info-box mt-2">
+            열처리된 <span class="badge badge-red">S형(병원성)</span> 세균의 어떤 물질이 살아있는 <span class="badge badge-blue">R형(비병원성)</span> 세균을 변화시킴.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="font-semibold text-slate-800">Avery <span class="badge badge-green">1944</span></div>
+          <p class="text-sm text-slate-600 mt-1">형질전환 물질이 <strong>DNA</strong>임을 규명.</p>
+          <div class="tip-box">💡 효소 처리법 이용 — DNase로 DNA를 분해하자 형질전환이 사라짐.</div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="font-semibold text-slate-800">Hershey & Chase <span class="badge badge-green">1952</span></div>
+          <p class="text-sm text-slate-600 mt-1">박테리오파지 실험으로 <strong>DNA가 유전물질임을 확증</strong>.</p>
+          <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+            <table class="nice-table">
+              <thead><tr><th>동위원소</th><th>표지 대상</th><th>이유</th><th>결과</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><code class="mono text-blue-700">³²P (인)</code></td>
+                  <td>DNA</td>
+                  <td>인은 DNA 골격에만 존재</td>
+                  <td><span class="badge badge-red">세균 내부에서 발견 ✓</span></td>
+                </tr>
+                <tr>
+                  <td><code class="mono text-purple-700">³⁵S (황)</code></td>
+                  <td>단백질</td>
+                  <td>황은 아미노산에만 존재</td>
+                  <td><span class="badge badge-blue">상등액에서만 발견</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tip-box mt-3">🔑 결론: 세균 내부에서 ³²P(DNA)만 발견 → 유전 정보 전달자는 단백질이 아닌 <strong>DNA</strong>.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CH2 ══════════════ -->
+  <div class="section-card" id="ch2">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num" style="background:#2563eb;">2</div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-800">DNA의 구조</div>
+        <div class="text-xs text-slate-400 mt-0.5">이중나선, 결합, 형태</div>
+      </div>
+      <span class="toggle-arrow text-slate-400 text-lg">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="keyword-grid">
+        <div class="keyword-card">
+          <div class="kw-label">공유결합</div>
+          <div class="kw-text">가닥 <strong>내(세로)</strong> — 당-인산 골격. 매우 튼튼함.</div>
+        </div>
+        <div class="keyword-card">
+          <div class="kw-label">수소결합</div>
+          <div class="kw-text">가닥 <strong>간(가로)</strong> — 염기 연결. 복제 시 쉽게 분리.</div>
+        </div>
+        <div class="keyword-card">
+          <div class="kw-label">A-T 결합</div>
+          <div class="kw-text">수소결합 <strong>2개</strong> — 상대적으로 약함.</div>
+        </div>
+        <div class="keyword-card">
+          <div class="kw-label">G-C 결합</div>
+          <div class="kw-text">수소결합 <strong>3개</strong> — 끊기 더 어려움.</div>
+        </div>
+      </div>
+
+      <div class="mt-4 overflow-x-auto rounded-xl border border-slate-200">
+        <table class="nice-table">
+          <thead><tr><th>DNA 형태</th><th>특징</th></tr></thead>
+          <tbody>
+            <tr><td><strong>B-DNA</strong></td><td>일반적 형태, <strong>오른나선</strong></td></tr>
+            <tr><td><strong>Z-DNA</strong></td><td>왼나선</td></tr>
+            <tr><td><strong>A-DNA</strong></td><td>탈수 조건에서 형성</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box mt-4">
+        🧬 <strong>Groove(홈)</strong>: Major groove와 Minor groove가 있으며,
+        단백질은 주로 <strong>Major groove</strong>에 결합하여 유전자 발현을 조절함.
+      </div>
+      <div class="tip-box">
+        ⚠️ 구조적 핵심: <strong>역평행(antiparallel) 이중나선</strong> — 한 가닥은 5'→3', 반대 가닥은 3'→5'.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CH3 ══════════════ -->
+  <div class="section-card" id="ch3">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num" style="background:#7c3aed;">3</div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-800">DNA 복제 (Replication)</div>
+        <div class="text-xs text-slate-400 mt-0.5">반보존적 복제, 관여 효소, 말단 복제 문제</div>
+      </div>
+      <span class="toggle-arrow text-slate-400 text-lg">▾</span>
+    </div>
+    <div class="section-body">
+
+      <h3 class="font-bold text-slate-700 mb-3">🔬 Meselson & Stahl 실험 (반보존적 복제 증명)</h3>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 mb-4">
+        <table class="nice-table">
+          <thead><tr><th>세대</th><th>관찰</th><th>의미</th></tr></thead>
+          <tbody>
+            <tr><td>0세대</td><td>무거운 띠(¹⁵N) 하나</td><td>순수 ¹⁵N DNA</td></tr>
+            <tr><td>1세대</td><td><strong>중간 무게 띠</strong> 하나</td><td>보존적 모델 기각</td></tr>
+            <tr><td>2세대</td><td>중간 띠 + <strong>가벼운 띠</strong></td><td>분산적 모델 기각 → <span class="badge badge-green">반보존적 확정</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="font-bold text-slate-700 mb-3">⚙️ 관여 효소</h3>
+      <div class="keyword-grid mb-4">
+        <div class="keyword-card"><div class="kw-label">Helicase</div><div class="kw-text">이중나선을 풂.</div></div>
+        <div class="keyword-card"><div class="kw-label">SSBP</div><div class="kw-text">풀린 외가닥을 안정화.</div></div>
+        <div class="keyword-card"><div class="kw-label">Topoisomerase</div><div class="kw-text">꼬임 긴장 해소.</div></div>
+        <div class="keyword-card"><div class="kw-label">Primase</div><div class="kw-text">RNA 프라이머 합성.</div></div>
+        <div class="keyword-card"><div class="kw-label">DNA Polymerase</div><div class="kw-text">5'→3' 방향만 합성. 프라이머(3'-OH) 필수.</div></div>
+        <div class="keyword-card"><div class="kw-label">Ligase</div><div class="kw-text">오카자키 절편 연결.</div></div>
+      </div>
+
+      <h3 class="font-bold text-slate-700 mb-2">🔄 선도가닥 vs 지연가닥</h3>
+      <div class="info-box">
+        <strong>선도 가닥(Leading strand)</strong>: 연속 합성 (5'→3' 방향과 복제 진행 방향 일치)<br>
+        <strong>지연 가닥(Lagging strand)</strong>: 불연속 합성 → <strong>오카자키 절편</strong> 생성 → Ligase로 연결
+      </div>
+
+      <h3 class="font-bold text-slate-700 mt-4 mb-2">📏 말단 복제 문제 & Telomerase</h3>
+      <div class="tip-box">
+        선형 DNA 끝부분은 복제마다 짧아짐.<br>
+        <strong>Telomerase</strong>: 자체 RNA 템플릿을 이용해 말단을 연장.
+        생식세포 · 암세포에서 활성 높음.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CH4 ══════════════ -->
+  <div class="section-card" id="ch4">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num" style="background:#db2777;">4</div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-800">염색체 구조 & 후성유전학</div>
+        <div class="text-xs text-slate-400 mt-0.5">뉴클레오솜, 에피제네틱스</div>
+      </div>
+      <span class="toggle-arrow text-slate-400 text-lg">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="info-box mb-4">
+        🧩 포장 단계: <strong>DNA + 히스톤 → 뉴클레오솜 → 염색질(Chromatin)</strong>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="rounded-xl border-2 border-green-300 bg-green-50 p-4">
+          <div class="font-bold text-green-800 mb-1">🟢 Euchromatin (진정염색질)</div>
+          <div class="text-sm text-green-700">느슨함 → 유전자 발현 <strong>활발</strong> (Turn On)</div>
+        </div>
+        <div class="rounded-xl border-2 border-slate-300 bg-slate-100 p-4">
+          <div class="font-bold text-slate-700 mb-1">⚫ Heterochromatin (이질염색질)</div>
+          <div class="text-sm text-slate-600">응축됨 → 유전자 발현 <strong>억제</strong> (Turn Off)</div>
+        </div>
+      </div>
+
+      <h3 class="font-bold text-slate-700 mb-3">🧪 화학적 변형 (Epigenetics)</h3>
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="nice-table">
+          <thead><tr><th>변형</th><th>효과</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>DNA 메틸화</strong></td>
+              <td>응축 유도</td>
+              <td><span class="badge badge-red">발현 억제</span></td>
+            </tr>
+            <tr>
+              <td><strong>히스톤 아세틸화</strong></td>
+              <td>구조 풀림</td>
+              <td><span class="badge badge-green">발현 촉진</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CH5 ══════════════ -->
+  <div class="section-card" id="ch5">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-num" style="background:#d97706;">5</div>
+      <div class="flex-1">
+        <div class="font-bold text-slate-800">생명공학 기술</div>
+        <div class="text-xs text-slate-400 mt-0.5">PCR, 젤 전기영동, 클로닝</div>
+      </div>
+      <span class="toggle-arrow text-slate-400 text-lg">▾</span>
+    </div>
+    <div class="section-body">
+
+      <h3 class="font-bold text-slate-700 mb-3">🔁 PCR (Polymerase Chain Reaction)</h3>
+      <div class="flex gap-2 flex-wrap mb-3">
+        <div class="rounded-xl border border-red-200 bg-red-50 p-3 flex-1 min-w-[130px] text-center">
+          <div class="text-xl mb-1">🔥</div>
+          <div class="font-bold text-red-700 text-sm">변성</div>
+          <div class="mono text-xs text-red-600 mt-1">95°C</div>
+          <div class="text-xs text-slate-500 mt-1">이중나선 분리</div>
+        </div>
+        <div class="flex items-center text-slate-300 font-bold">→</div>
+        <div class="rounded-xl border border-blue-200 bg-blue-50 p-3 flex-1 min-w-[130px] text-center">
+          <div class="text-xl mb-1">🧲</div>
+          <div class="font-bold text-blue-700 text-sm">결합</div>
+          <div class="mono text-xs text-blue-600 mt-1">50~60°C</div>
+          <div class="text-xs text-slate-500 mt-1">프라이머 결합</div>
+        </div>
+        <div class="flex items-center text-slate-300 font-bold">→</div>
+        <div class="rounded-xl border border-green-200 bg-green-50 p-3 flex-1 min-w-[130px] text-center">
+          <div class="text-xl mb-1">⚙️</div>
+          <div class="font-bold text-green-700 text-sm">신장</div>
+          <div class="mono text-xs text-green-600 mt-1">72°C</div>
+          <div class="text-xs text-slate-500 mt-1">Taq Pol 합성</div>
+        </div>
+      </div>
+      <div class="tip-box">💡 <strong>Taq Polymerase</strong> 사용 이유: 고온에서도 안정적인 내열성 효소.</div>
+
+      <h3 class="font-bold text-slate-700 mt-5 mb-3">⚡ 젤 전기영동</h3>
+      <div class="info-box">
+        DNA는 <strong>(−) 전하</strong>이므로 (+)극 방향으로 이동.<br>
+        <strong>작은 조각</strong>이 더 빨리, 멀리 이동 → 크기별 분리.
+      </div>
+
+      <h3 class="font-bold text-slate-700 mt-5 mb-3">🔬 클로닝</h3>
+      <div class="info-box">
+        <strong>제한효소</strong>로 DNA 자르기 → <strong>플라스미드</strong>에 삽입 → <strong>리가아제</strong>로 연결 → 세균에 도입하여 대량 증폭.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ QUIZ ═══════════════ -->
+  <div id="quiz" class="quiz-section">
+    <div class="text-center mb-8">
+      <p class="text-sm font-bold text-green-700 tracking-widest uppercase mb-1">확인 문제</p>
+      <h2 class="text-2xl font-bold text-slate-800">🎯 DNA & 유전 퀴즈</h2>
+      <p class="text-slate-500 text-sm mt-1">총 15문제 — 맞으면 즉시 ✅, 틀리면 ❌ 표시</p>
+      <div class="mt-4 max-w-xs mx-auto">
+        <div class="flex justify-between text-xs text-slate-400 mb-1">
+          <span>진행도</span><span id="prog-text">0 / 15</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Q1 객관식 -->
+    <div class="quiz-card" id="qcard-1">
+      <div class="quiz-q"><span class="quiz-num">Q1</span>형질전환(Transformation)을 처음 발견한 과학자는?</div>
+      <button class="option-btn" onclick="mcq(1,'A','D')">A. Avery</button>
+      <button class="option-btn" onclick="mcq(1,'B','D')">B. Morgan</button>
+      <button class="option-btn" onclick="mcq(1,'C','D')">C. Hershey</button>
+      <button class="option-btn" onclick="mcq(1,'D','D')">D. Griffith</button>
+      <div class="feedback" id="fb-1"></div>
+    </div>
+
+    <!-- Q2 객관식 -->
+    <div class="quiz-card" id="qcard-2">
+      <div class="quiz-q"><span class="quiz-num">Q2</span>Hershey & Chase 실험에서 ³²P(인)으로 표지한 것은?</div>
+      <button class="option-btn" onclick="mcq(2,'A','B')">A. 단백질 껍데기</button>
+      <button class="option-btn" onclick="mcq(2,'B','B')">B. DNA</button>
+      <button class="option-btn" onclick="mcq(2,'C','B')">C. RNA</button>
+      <button class="option-btn" onclick="mcq(2,'D','B')">D. 히스톤</button>
+      <div class="feedback" id="fb-2"></div>
+    </div>
+
+    <!-- Q3 O/X -->
+    <div class="quiz-card" id="qcard-3">
+      <div class="quiz-q"><span class="quiz-num">Q3</span>A-T 염기쌍은 수소결합이 3개이다. (O/X)</div>
+      <div class="ox-group">
+        <button class="ox-btn" onclick="ox(3,'O','X')">⭕ O</button>
+        <button class="ox-btn" onclick="ox(3,'X','X')">❌ X</button>
+      </div>
+      <div class="feedback" id="fb-3"></div>
+    </div>
+
+    <!-- Q4 빈칸 -->
+    <div class="quiz-card" id="qcard-4">
+      <div class="quiz-q"><span class="quiz-num">Q4</span>단백질은 주로 DNA의 ( ___ ) groove에 결합하여 유전자 발현을 조절한다.</div>
+      <input class="fill-input" id="fi-4" placeholder="영어로 입력하세요" />
+      <button class="submit-btn" onclick="fill(4,['major'])">제출</button>
+      <div class="feedback" id="fb-4"></div>
+    </div>
+
+    <!-- Q5 객관식 -->
+    <div class="quiz-card" id="qcard-5">
+      <div class="quiz-q"><span class="quiz-num">Q5</span>Meselson & Stahl 실험에서 1세대 결과로 옳은 것은?</div>
+      <button class="option-btn" onclick="mcq(5,'A','C')">A. 무거운 띠 하나</button>
+      <button class="option-btn" onclick="mcq(5,'B','C')">B. 가벼운 띠 하나</button>
+      <button class="option-btn" onclick="mcq(5,'C','C')">C. 중간 무게 띠 하나 (하이브리드)</button>
+      <button class="option-btn" onclick="mcq(5,'D','C')">D. 중간 띠 + 가벼운 띠</button>
+      <div class="feedback" id="fb-5"></div>
+    </div>
+
+    <!-- Q6 객관식 -->
+    <div class="quiz-card" id="qcard-6">
+      <div class="quiz-q"><span class="quiz-num">Q6</span>DNA 복제에서 RNA 프라이머를 합성하는 효소는?</div>
+      <button class="option-btn" onclick="mcq(6,'A','B')">A. Helicase</button>
+      <button class="option-btn" onclick="mcq(6,'B','B')">B. Primase</button>
+      <button class="option-btn" onclick="mcq(6,'C','B')">C. Ligase</button>
+      <button class="option-btn" onclick="mcq(6,'D','B')">D. Topoisomerase</button>
+      <div class="feedback" id="fb-6"></div>
+    </div>
+
+    <!-- Q7 O/X -->
+    <div class="quiz-card" id="qcard-7">
+      <div class="quiz-q"><span class="quiz-num">Q7</span>DNA Polymerase는 3'→5' 방향으로 새 가닥을 합성한다. (O/X)</div>
+      <div class="ox-group">
+        <button class="ox-btn" onclick="ox(7,'O','X')">⭕ O</button>
+        <button class="ox-btn" onclick="ox(7,'X','X')">❌ X</button>
+      </div>
+      <div class="feedback" id="fb-7"></div>
+    </div>
+
+    <!-- Q8 빈칸 -->
+    <div class="quiz-card" id="qcard-8">
+      <div class="quiz-q"><span class="quiz-num">Q8</span>지연 가닥에서 불연속적으로 합성된 짧은 단편을 ( ___ ) 절편이라 한다.</div>
+      <input class="fill-input" id="fi-8" placeholder="한국어로 입력하세요" />
+      <button class="submit-btn" onclick="fill(8,['오카자키'])">제출</button>
+      <div class="feedback" id="fb-8"></div>
+    </div>
+
+    <!-- Q9 객관식 -->
+    <div class="quiz-card" id="qcard-9">
+      <div class="quiz-q"><span class="quiz-num">Q9</span>Telomerase에 대한 설명으로 옳지 않은 것은?</div>
+      <button class="option-btn" onclick="mcq(9,'A','D')">A. 자체 RNA 템플릿을 이용한다</button>
+      <button class="option-btn" onclick="mcq(9,'B','D')">B. 암세포에서 활성이 높다</button>
+      <button class="option-btn" onclick="mcq(9,'C','D')">C. DNA 말단을 연장한다</button>
+      <button class="option-btn" onclick="mcq(9,'D','D')">D. 체세포에서 활성이 가장 높다</button>
+      <div class="feedback" id="fb-9"></div>
+    </div>
+
+    <!-- Q10 객관식 -->
+    <div class="quiz-card" id="qcard-10">
+      <div class="quiz-q"><span class="quiz-num">Q10</span>히스톤 아세틸화가 일어나면 유전자 발현은?</div>
+      <button class="option-btn" onclick="mcq(10,'A','B')">A. 억제된다</button>
+      <button class="option-btn" onclick="mcq(10,'B','B')">B. 촉진된다</button>
+      <button class="option-btn" onclick="mcq(10,'C','B')">C. 변화 없다</button>
+      <button class="option-btn" onclick="mcq(10,'D','B')">D. 경우에 따라 다르다</button>
+      <div class="feedback" id="fb-10"></div>
+    </div>
+
+    <!-- Q11 O/X -->
+    <div class="quiz-card" id="qcard-11">
+      <div class="quiz-q"><span class="quiz-num">Q11</span>Euchromatin(진정염색질)은 응축되어 있어 유전자 발현이 억제된다. (O/X)</div>
+      <div class="ox-group">
+        <button class="ox-btn" onclick="ox(11,'O','X')">⭕ O</button>
+        <button class="ox-btn" onclick="ox(11,'X','X')">❌ X</button>
+      </div>
+      <div class="feedback" id="fb-11"></div>
+    </div>
+
+    <!-- Q12 빈칸 -->
+    <div class="quiz-card" id="qcard-12">
+      <div class="quiz-q"><span class="quiz-num">Q12</span>PCR의 신장(Extension) 단계 온도는 몇 °C인가?</div>
+      <input class="fill-input" id="fi-12" placeholder="숫자만 입력하세요" />
+      <button class="submit-btn" onclick="fill(12,['72'])">제출</button>
+      <div class="feedback" id="fb-12"></div>
+    </div>
+
+    <!-- Q13 객관식 -->
+    <div class="quiz-card" id="qcard-13">
+      <div class="quiz-q"><span class="quiz-num">Q13</span>젤 전기영동에서 가장 멀리 이동하는 DNA 조각은?</div>
+      <button class="option-btn" onclick="mcq(13,'A','C')">A. 가장 큰 조각</button>
+      <button class="option-btn" onclick="mcq(13,'B','C')">B. 음전하가 가장 적은 조각</button>
+      <button class="option-btn" onclick="mcq(13,'C','C')">C. 가장 작은 조각</button>
+      <button class="option-btn" onclick="mcq(13,'D','C')">D. 가장 무거운 조각</button>
+      <div class="feedback" id="fb-13"></div>
+    </div>
+
+    <!-- Q14 O/X -->
+    <div class="quiz-card" id="qcard-14">
+      <div class="quiz-q"><span class="quiz-num">Q14</span>DNA 메틸화는 유전자 발현을 촉진한다. (O/X)</div>
+      <div class="ox-group">
+        <button class="ox-btn" onclick="ox(14,'O','X')">⭕ O</button>
+        <button class="ox-btn" onclick="ox(14,'X','X')">❌ X</button>
+      </div>
+      <div class="feedback" id="fb-14"></div>
+    </div>
+
+    <!-- Q15 객관식 -->
+    <div class="quiz-card" id="qcard-15">
+      <div class="quiz-q"><span class="quiz-num">Q15</span>클로닝 과정에서 유전자를 플라스미드에 삽입할 때 사용하는 효소 조합은?</div>
+      <button class="option-btn" onclick="mcq(15,'A','C')">A. Helicase + Primase</button>
+      <button class="option-btn" onclick="mcq(15,'B','C')">B. Taq Pol + Topoisomerase</button>
+      <button class="option-btn" onclick="mcq(15,'C','C')">C. 제한효소 + 리가아제</button>
+      <button class="option-btn" onclick="mcq(15,'D','C')">D. SSBP + Telomerase</button>
+      <div class="feedback" id="fb-15"></div>
+    </div>
+
+    <!-- 점수판 -->
+    <div class="score-board" id="score-board" style="display:none;">
+      <p class="text-green-300 text-sm font-semibold tracking-widest uppercase mb-4">최종 결과</p>
+      <div>
+        <span class="score-num" id="score-num">0</span>
+        <span class="score-denom"> / 15</span>
+      </div>
+      <p class="text-white text-lg mt-3" id="score-msg"></p>
+      <button onclick="resetQuiz()" class="mt-6 px-6 py-3 bg-white text-slate-800 rounded-xl font-bold text-sm hover:bg-green-50 transition">
+        🔄 다시 풀기
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<footer class="text-center py-8 text-xs text-slate-400">
+  생명과학 정리노트 · DNA & 유전 · Made with ❤️
+</footer>
+
+<script>
+  let answered = new Set();
+  let score = 0;
+  const TOTAL = 15;
+
+  const feedbacks = {
+    1: { ok:'✅ 정답! Griffith(1928)가 형질전환을 처음 발견했습니다.', err:'❌ 오답. 형질전환을 발견한 과학자는 Griffith(1928)입니다.' },
+    2: { ok:'✅ 정답! ³²P(인)은 DNA에 존재하므로 DNA를 표지합니다.', err:'❌ 오답. ³²P(인)은 DNA 골격에만 있어 DNA 표지에 사용합니다.' },
+    3: { ok:'✅ 정답! A-T는 수소결합 2개, G-C가 3개입니다.', err:'❌ 오답. A-T는 수소결합이 2개입니다. G-C가 3개.' },
+    4: { ok:'✅ 정답! 단백질은 Major groove에 결합합니다.', err:'❌ 오답. 정답은 Major groove입니다.' },
+    5: { ok:'✅ 정답! 1세대에서 중간 무게(하이브리드) 띠 하나만 관찰되어 보존적 모델이 기각됩니다.', err:'❌ 오답. 1세대 결과는 중간 무게 띠 하나입니다.' },
+    6: { ok:'✅ 정답! Primase가 RNA 프라이머를 합성합니다.', err:'❌ 오답. RNA 프라이머를 합성하는 효소는 Primase입니다.' },
+    7: { ok:'✅ 정답! DNA Pol은 5\'→3\' 방향으로만 합성합니다 (X가 정답).', err:'❌ 오답. DNA Polymerase는 5\'→3\' 방향으로만 합성합니다.' },
+    8: { ok:'✅ 정답! 지연 가닥의 불연속 단편을 오카자키 절편이라 합니다.', err:'❌ 오답. 정답은 오카자키 절편입니다.' },
+    9: { ok:'✅ 정답! Telomerase는 체세포에서 거의 비활성이며 생식세포·암세포에서 활성이 높습니다.', err:'❌ 오답. Telomerase는 생식세포와 암세포에서 활성이 높습니다.' },
+    10:{ ok:'✅ 정답! 히스톤 아세틸화는 DNA 구조를 풀어 발현을 촉진합니다.', err:'❌ 오답. 히스톤 아세틸화는 발현을 촉진합니다.' },
+    11:{ ok:'✅ 정답! Euchromatin은 느슨하여 발현이 활발합니다 (X가 정답).', err:'❌ 오답. Euchromatin은 느슨하게 풀려 유전자 발현이 활발합니다.' },
+    12:{ ok:'✅ 정답! 신장 단계는 72°C에서 Taq Polymerase가 작동합니다.', err:'❌ 오답. 신장 단계 온도는 72°C입니다.' },
+    13:{ ok:'✅ 정답! 작은 조각일수록 젤을 통과하기 쉬워 더 멀리 이동합니다.', err:'❌ 오답. 크기가 작은 조각이 더 멀리 이동합니다.' },
+    14:{ ok:'✅ 정답! DNA 메틸화는 응축을 유도하여 발현을 억제합니다 (X가 정답).', err:'❌ 오답. DNA 메틸화는 발현을 억제합니다.' },
+    15:{ ok:'✅ 정답! 제한효소로 자르고 리가아제로 연결하여 클로닝합니다.', err:'❌ 오답. 제한효소 + 리가아제 조합을 사용합니다.' },
+  };
+
+  function updateProgress() {
+    const pct = (answered.size / TOTAL) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('prog-text').textContent = answered.size + ' / ' + TOTAL;
+    if (answered.size === TOTAL) showScore();
+  }
+
+  function showFeedback(qn, correct) {
+    const fb = document.getElementById('fb-' + qn);
+    fb.textContent = correct ? feedbacks[qn].ok : feedbacks[qn].err;
+    fb.className = 'feedback ' + (correct ? 'ok' : 'err');
+  }
+
+  function mcq(qn, chosen, correct) {
+    if (answered.has(qn)) return;
+    answered.add(qn);
+    const isCorrect = chosen === correct;
+    if (isCorrect) score++;
+    const card = document.getElementById('qcard-' + qn);
+    card.querySelectorAll('.option-btn').forEach(btn => {
+      btn.disabled = true;
+      const letter = btn.textContent.trim()[0];
+      if (letter === correct) btn.classList.add('correct');
+      else if (letter === chosen && !isCorrect) btn.classList.add('wrong');
+      else btn.classList.add('disabled');
+    });
+    showFeedback(qn, isCorrect);
+    updateProgress();
+  }
+
+  function ox(qn, chosen, correct) {
+    if (answered.has(qn)) return;
+    answered.add(qn);
+    const isCorrect = chosen === correct;
+    if (isCorrect) score++;
+    const card = document.getElementById('qcard-' + qn);
+    card.querySelectorAll('.ox-btn').forEach(btn => {
+      btn.disabled = true;
+      const val = btn.textContent.includes('⭕') ? 'O' : 'X';
+      if (val === correct) btn.classList.add('correct');
+      else if (val === chosen && !isCorrect) btn.classList.add('wrong');
+    });
+    showFeedback(qn, isCorrect);
+    updateProgress();
+  }
+
+  function fill(qn, acceptList) {
+    if (answered.has(qn)) return;
+    const input = document.getElementById('fi-' + qn);
+    const val = input.value.trim().toLowerCase();
+    const isCorrect = acceptList.some(a => val === a.toLowerCase());
+    answered.add(qn);
+    if (isCorrect) score++;
+    input.classList.add(isCorrect ? 'correct' : 'wrong');
+    input.disabled = true;
+    input.nextElementSibling.disabled = true;
+    showFeedback(qn, isCorrect);
+    updateProgress();
+  }
+
+  function showScore() {
+    const board = document.getElementById('score-board');
+    board.style.display = 'block';
+    document.getElementById('score-num').textContent = score;
+    const pct = score / TOTAL;
+    const msg = pct === 1 ? '🎉 완벽해요! 만점입니다!'
+      : pct >= 0.8 ? '👏 훌륭해요! 거의 다 알고 있네요.'
+      : pct >= 0.6 ? '😊 좋아요! 조금 더 복습하면 완벽해요.'
+      : '📖 다시 한번 정리본을 읽고 도전해 보세요!';
+    document.getElementById('score-msg').textContent = msg;
+    board.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetQuiz() {
+    answered.clear(); score = 0;
+    document.getElementById('score-board').style.display = 'none';
+    updateProgress();
+    // 버튼 초기화
+    document.querySelectorAll('.option-btn').forEach(b => {
+      b.disabled = false; b.className = 'option-btn';
+    });
+    document.querySelectorAll('.ox-btn').forEach(b => {
+      b.disabled = false; b.className = 'ox-btn';
+    });
+    document.querySelectorAll('.fill-input').forEach(b => {
+      b.disabled = false; b.value = ''; b.className = 'fill-input';
+    });
+    document.querySelectorAll('.submit-btn').forEach(b => { b.disabled = false; });
+    document.querySelectorAll('.feedback').forEach(f => { f.textContent = ''; f.className = 'feedback'; });
+    window.scrollTo({ top: document.getElementById('quiz').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const arrow = header.querySelector('.toggle-arrow');
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(0deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(-90deg)';
+    }
+  }
+</script>
+</body>
+</html>
